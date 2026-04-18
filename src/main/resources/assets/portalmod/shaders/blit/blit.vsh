@@ -1,9 +1,11 @@
-#version 130
+#version 150
 
-in vec3 position;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord0;
+
 out vec2 coords;
 
 void main() {
-    coords = gl_MultiTexCoord0.xy;
+    coords = texCoord0.xy;
     gl_Position = vec4(position, 1.);
 }

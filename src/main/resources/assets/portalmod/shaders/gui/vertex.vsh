@@ -1,8 +1,10 @@
-#version 110
+#version 150
 
-attribute vec4 position;
+layout(location = 0) in vec4 position;
+
 uniform mat4 modelViewProjection;
-varying vec2 coords;
+
+out vec2 coords;
 
 void main() {
     vec4 pos = (modelViewProjection * position);

@@ -1,4 +1,4 @@
-#version 110
+#version 150
 
 uniform ivec2 res;
 uniform int pitch;
@@ -10,7 +10,11 @@ uniform float target;
 uniform ivec2 offset;
 uniform sampler2D atlas;
 uniform vec2 atlasSize;
-varying vec2 coords;
+
+in vec2 coords;
+
+out vec4 fragColor;
+
 const vec4 yellowSpr = vec4(0,  179, 12, 191);
 const vec4 targetSpr = vec4(14, 180, 24, 190);
 
@@ -54,24 +58,24 @@ vec3 drawSprite(vec2 screenPos, vec4 sprRect, vec2 center, vec3 baseColor) {
     float v = mix(uv0.y, uv1.y, 1.0 - uvLocal.y);
     vec2 uv = vec2(u, v);
 
-    vec4 color = texture2D(atlas, uv);
+    vec4 color = texture(atlas, uv);
     return mix(baseColor, color.rgb, color.a);
 }
 
 void main() {
-    gl_FragColor.a = (1.0 - pow(abs(coords.x), 10.0)) * (1.0 - pow(abs(coords.y), 10.0));
+    fragColor.a = (1.0 - pow(abs(coords.x), 10.0)) * (1.0 - pow(abs(coords.y), 10.0));
 
     vec2 cord = coords / 2.0 * vec2(res) - vec2(offset);
 
     if (floor(mod(cord.x, float(pitch))) == 0. || floor(mod(1.0 - cord.y, float(pitch))) == 0.)
-        gl_FragColor.xyz = vec3(.2);
+        fragColor.xyz = vec3(.2);
     else
-        gl_FragColor.xyz = vec3(0.0);
+        fragColor.xyz = vec3(0.0);
 
     if (floor(1.0 - cord.y) == 0.0)
-        gl_FragColor.xyz = vec3(.5, .2, .2);
+        fragColor.xyz = vec3(.5, .2, .2);
     else if (floor(cord.x) == 0.0)
-        gl_FragColor.xyz = vec3(.2, .5, .2);
+        fragColor.xyz = vec3(.2, .5, .2);
 
     if (a == a) { // if a == NaN
         if (cord.x > 1.0 || (cord.x > 0.0 && cord.y > 0.0)) {
@@ -79,26 +83,26 @@ void main() {
             -b*b / a / vec2(res).y / 2.0 * float(pitch))
             - vec2(offset) / vec2(res).xy * 2.0,
             a * vec2(res).x / float(pitch) * 0.89);
-            gl_FragColor.xyz = mix(gl_FragColor.xyz,
+            fragColor.xyz = mix(fragColor.xyz,
             (cord.x / float(pitch) < target) ? vec3(1.0) : vec3(0.5),
             1.0 - smoothstep(0.0, 0.01, abs(d)));
         }
 
         vec2 targetCenter = float(pitch) * vec2(target, a * target * target + b * target);
-        gl_FragColor.rgb = drawSprite(cord, targetSpr, targetCenter, gl_FragColor.rgb);
+        fragColor.rgb = drawSprite(cord, targetSpr, targetCenter, fragColor.rgb);
 
         vec2 yellowCenter = float(pitch) * vec2(middle, a * middle * middle + b * middle);
-        gl_FragColor.rgb = drawSprite(cord, yellowSpr, yellowCenter, gl_FragColor.rgb);
+        fragColor.rgb = drawSprite(cord, yellowSpr, yellowCenter, fragColor.rgb);
 
     } else {
         float d = dLine(coords - vec2(offset) / vec2(res).xy * 2.0,
         vec2(0.0), vec2(0.0, height) / vec2(res.xy) * 2.0 * float(pitch));
-        gl_FragColor.xyz = mix(gl_FragColor.xyz, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
+        fragColor.xyz = mix(fragColor.xyz, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
 
         vec2 targetCenter = float(pitch) * vec2(target, height);
-        gl_FragColor.rgb = drawSprite(cord, targetSpr, targetCenter, gl_FragColor.rgb);
+        fragColor.rgb = drawSprite(cord, targetSpr, targetCenter, fragColor.rgb);
 
         vec2 yellowCenter = float(pitch) * vec2(middle, height);
-        gl_FragColor.rgb = drawSprite(cord, yellowSpr, yellowCenter, gl_FragColor.rgb);
+        fragColor.rgb = drawSprite(cord, yellowSpr, yellowCenter, fragColor.rgb);
     }
 }

@@ -1,4 +1,4 @@
-#version 110
+#version 150
 
 #define PI 3.14159265359
 const vec3 bg     = vec3(51.  / 255., 54.  / 255., 62.  / 255.);
@@ -8,7 +8,9 @@ const vec3 blue   = vec3(61.  / 255., 122. / 255., 219. / 255.);
 uniform float millis;
 uniform vec2 resolution;
 
-varying vec2 uv;
+in vec2 uv;
+
+out vec4 fragColor;
 
 void main() {
     float time = millis * 3. + 4.;
@@ -24,8 +26,8 @@ void main() {
     vec3 col = mix(blue, orange, t);
 
     if(v > 50. && v < 100.) {
-        gl_FragColor = vec4(col, 1.0);
+        fragColor = vec4(col, 1.0);
     } else {
-        gl_FragColor = vec4(bg, 1.0);
+        fragColor = vec4(bg, 1.0);
     }
 }
