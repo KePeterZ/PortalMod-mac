@@ -1,10 +1,12 @@
-#version 110
+#version 150
 
 uniform sampler2D texture;
 uniform int frameCount;
 uniform int frameIndex;
 
-varying vec2 texCoord;
+in vec2 texCoord;
+
+out vec4 fragColor;
 
 void main() {
     vec2 uv = texCoord;
@@ -12,5 +14,5 @@ void main() {
     uv.x = 1. - uv.x;
 
     uv.y += float(frameIndex) / float(frameCount);
-    gl_FragColor = texture2D(texture, uv);
+    fragColor = texture(texture, uv);
 }

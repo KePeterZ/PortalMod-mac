@@ -1,10 +1,11 @@
-#version 130
+#version 150
 
-in vec3 position;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord0;
 
-varying vec2 uv;
+out vec2 uv;
 
 void main() {
     gl_Position = vec4(position, 1.);
-    uv = gl_MultiTexCoord0.xy;
+    uv = texCoord0.xy;
 }
